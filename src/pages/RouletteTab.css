@@ -1,0 +1,296 @@
+.roulette-tab {
+  display: grid;
+  gap: 28px;
+}
+
+/* 반 선택 */
+.class-selector-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.class-pill {
+  padding: 8px 28px;
+  border: 2px solid #d8e2c8;
+  border-radius: 999px;
+  background: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  color: #3f4b35;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.class-pill:hover {
+  border-color: #2f7a3e;
+  color: #2f7a3e;
+}
+
+.class-pill.active {
+  background: #2f7a3e;
+  color: #fff;
+  border-color: #2f7a3e;
+  box-shadow: 0 4px 12px rgba(47, 122, 62, 0.3);
+}
+
+/* 룰렛 스테이지 */
+.roulette-stage {
+  display: grid;
+  place-items: center;
+  gap: 20px;
+}
+
+/* 배정 보드 */
+.assignment-board {
+  width: min(100%, 620px);
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #f7fbf1, #eef6e3);
+  border: 2px solid #d8e2c8;
+  box-shadow: 0 12px 36px rgba(23, 31, 13, 0.12);
+}
+
+.assignment-board.spinning {
+  animation: board-shake 0.11s ease-in-out infinite;
+}
+
+.assignment-board.reveal {
+  animation: wheel-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes board-shake {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  50% { transform: rotate(3deg) scale(1.05); }
+}
+
+@keyframes wheel-pop {
+  0% { transform: scale(0.7); opacity: 0.7; }
+  55% { transform: scale(1.28); }
+  75% { transform: scale(0.94); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.board-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1d2a12;
+  margin-bottom: 14px;
+}
+
+.assignment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.assignment-card {
+  border-radius: 12px;
+  border: 2px solid var(--card-color);
+  padding: 10px 12px;
+  background: #fff;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.assignment-group {
+  font-size: 15px;
+  font-weight: 800;
+  color: #28351d;
+}
+
+.assignment-arrow {
+  color: #8aa174;
+  font-weight: 700;
+}
+
+.assignment-table {
+  justify-self: end;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--card-color);
+}
+
+/* 결과 배너 */
+.result-banner {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #fffde7, #fff9c4);
+  border: 2px solid #f1c40f;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1d2a12;
+  text-align: center;
+  animation: slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 20px rgba(241, 196, 15, 0.3);
+}
+
+.result-banner strong {
+  font-size: 22px;
+  color: #e67e22;
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 룰렛 버튼 */
+.spin-btn {
+  padding: 16px 52px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2f7a3e, #4d9b58);
+  color: #fff;
+  box-shadow: 0 8px 28px rgba(47, 122, 62, 0.4);
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+  font-family: inherit;
+}
+
+.spin-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(47, 122, 62, 0.5);
+}
+
+.spin-btn:disabled {
+  cursor: not-allowed;
+}
+
+.spin-btn.active {
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  box-shadow: 0 8px 28px rgba(231, 76, 60, 0.4);
+  animation: spin-pulse 0.7s ease-in-out infinite;
+}
+
+@keyframes spin-pulse {
+  0%, 100% { box-shadow: 0 8px 28px rgba(231, 76, 60, 0.4); }
+  50% { box-shadow: 0 8px 40px rgba(231, 76, 60, 0.75); transform: scale(1.02); }
+}
+
+/* 이력 패널 */
+.history-panel {
+  border: 1px solid #d5d8d2;
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.history-header h4 {
+  margin: 0;
+  color: #1d2a12;
+  font-size: 14px;
+}
+
+.refresh-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background: #e8efe0;
+}
+
+.no-history {
+  text-align: center;
+  color: #3f4b35;
+  font-size: 14px;
+  padding: 20px;
+  margin: 0;
+}
+
+.history-list {
+  display: grid;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 115px auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #f9fdf6;
+  border-radius: 8px;
+  border: 1px solid #e8efe0;
+}
+
+.h-rank {
+  font-size: 11px;
+  color: #bbb;
+  text-align: right;
+  font-weight: 600;
+}
+
+.h-map {
+  font-size: 12px;
+  color: #22301a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.h-time {
+  font-size: 12px;
+  color: #3f4b35;
+  text-align: right;
+}
+
+.h-delete {
+  border: none;
+  background: transparent;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.h-delete:hover {
+  background: #fee;
+  color: #c00;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .assignment-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .spin-btn {
+    padding: 14px 36px;
+    font-size: 16px;
+  }
+
+  .history-item {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 6px;
+  }
+
+  .h-time {
+    display: none;
+  }
+}
