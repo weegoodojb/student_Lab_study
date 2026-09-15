@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -24,4 +24,33 @@ export const ADMIN_EMAIL =
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope('https://www.googleapis.com/auth/forms.body');
+googleProvider.addScope('https://www.googleapis.com/auth/forms.responses.readonly');
+// Forms are Drive files under the hood; Forms API calls require this alongside the forms.* scopes.
+googleProvider.addScope('https://www.googleapis.com/auth/drive.file');
+
+// Google OAuth access token (from GoogleAuthProvider.credentialFromResult), needed for
+// direct Forms API calls. Firebase Auth's ID token is separate and cannot be used here.
+// Only available right after signInWithPopup and expires after ~1h; if a Forms API call
+// fails with 401, the admin needs to sign in again to refresh it.
+let googleAccessToken = null;
+
+export function setGoogleAccessToken(token) {
+  googleAccessToken = token;
+}
+
+export function getGoogleAccessToken() {
+  return googleAccessToken;
+}
+
+// Re-runs the Google sign-in popup to refresh the access token (it isn't persisted across
+// reloads and expires after ~1h). The admin stays on the same account; this doesn't sign out.
+export async function reauthorizeGoogle() {
+  const result = await signInWithPopup(auth, googleProvider);
+  const credential = GoogleAuthProvider.credentialFromResult(result);
+  const token = credential?.accessToken || null;
+  setGoogleAccessToken(token);
+  return token;
+}

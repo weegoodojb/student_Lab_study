@@ -1,0 +1,14 @@
+.grade-management {
+  display: grid;
+  gap: 16px;
+}
+
+.notice-banner {
+  padding: 14px 16px;
+  background: #fff3e0;
+  border: 1px solid #ffe0b2;
+  border-radius: 10px;
+  color: #7a4a00;
+  font-size: 13px;
+  line-height: 1.6;
+}

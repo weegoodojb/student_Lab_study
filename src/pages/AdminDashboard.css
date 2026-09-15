@@ -4,10 +4,14 @@
 }
 
 .tabs-header {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   border-bottom: 2px solid #e8efe0;
+}
+
+.tabs-header .tab-btn {
+  flex: 1 1 140px;
 }
 
 .tab-btn {
@@ -245,6 +249,7 @@ textarea:focus {
   padding: 12px;
   border-radius: 8px;
   margin-top: 12px;
+  overflow-wrap: anywhere;
   font-size: 14px;
   font-weight: 600;
   background: #f0f4f0;
@@ -265,6 +270,28 @@ textarea:focus {
 }
 
 /* Students List */
+.student-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.student-filter-row select {
+  padding: 10px 12px;
+  border: 1px solid #d8e2c8;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #fbfdf8;
+  color: #1d2a12;
+}
+
+.student-filter-row .search-input {
+  flex: 1;
+  min-width: 160px;
+  margin-bottom: 0;
+}
+
 .search-input {
   width: 100%;
   padding: 10px 12px;
@@ -639,8 +666,8 @@ textarea:focus {
 }
 
 @media (max-width: 640px) {
-  .tabs-header {
-    grid-template-columns: 1fr;
+  .tabs-header .tab-btn {
+    flex: 1 1 100%;
   }
 
   .button-group {

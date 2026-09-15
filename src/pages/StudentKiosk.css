@@ -1,0 +1,125 @@
+.kiosk {
+  display: grid;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.kiosk-panel {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid #d8e2c8;
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 10px 30px rgba(36, 44, 20, 0.08);
+}
+
+.kiosk-panel h2 {
+  margin: 0 0 12px;
+  color: #1d2a12;
+  text-align: center;
+}
+
+.kiosk-form {
+  display: grid;
+  gap: 14px;
+}
+
+.kiosk-form .description {
+  margin: 0;
+  color: #3f4b35;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.kiosk-form input {
+  padding: 14px;
+  border: 1px solid #d5d8d2;
+  border-radius: 10px;
+  font-size: 18px;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.kiosk-form input:focus {
+  outline: none;
+  border-color: #2f7a3e;
+  box-shadow: 0 0 0 3px rgba(47, 122, 62, 0.1);
+}
+
+.alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  background: #ffe5e5;
+  border: 1px solid #ffb3b3;
+  color: #b71c1c;
+  text-align: center;
+}
+
+.kiosk-result {
+  display: grid;
+  gap: 16px;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8ede2;
+  font-weight: 700;
+  color: #1d2a12;
+}
+
+.result-header span:last-child {
+  font-size: 13px;
+  font-weight: 500;
+  color: #3f4b35;
+}
+
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
+}
+
+.score-item {
+  padding: 12px;
+  background: #f9fdf6;
+  border-radius: 8px;
+  border: 1px solid #d8e2c8;
+  display: grid;
+  gap: 4px;
+  text-align: center;
+}
+
+.score-item.highlight {
+  border: 2px solid #2f7a3e;
+  background: #fafcf7;
+}
+
+.score-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #3f4b35;
+}
+
+.score-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1d2a12;
+}
+
+.score-value.plus {
+  color: #2e7d32;
+}
+
+.score-value.minus {
+  color: #c62828;
+}
+
+.score-value.final {
+  color: #2f7a3e;
+}

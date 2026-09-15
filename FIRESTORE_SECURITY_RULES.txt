@@ -1,106 +1,68 @@
 // Firestore Security Rules for 학생실습관리
 // Deploy to Firebase Console: Firestore > Rules
+//
+// 설계 원칙: 이 앱의 모든 화면(학생 조회 키오스크 포함)은 관리자가 Google 로그인한
+// 세션 안에서만 사용된다. 별도의 학생 로그인은 없으므로 "본인만 읽기" 같은 규칙은
+// 불필요하고, 오히려 혼란만 준다 (예전 버전에는 그런 시도가 있었으나 실제로는
+// 작동하지 않았다). 따라서 전부 관리자 전용으로 단순화한다.
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // ==================== Helper Functions ====================
-    
-    // 관리자 여부 확인
+
     function isAdmin() {
-      return request.auth != null && 
+      return request.auth != null &&
              request.auth.token.email == 'goodojb@gmail.com';
     }
-    
-    // 인증된 사용자
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    
-    // 학생 본인 확인 (문서 ID = studentId)
-    function isSelf(studentId) {
-      return isAuthenticated() && 
-             request.auth.token.email != null &&
-             request.auth.uid != null;
-      // 실제로는 학생 UID가 필요하므로, 여기서는 단순화
-      // 학생 컬렉션에서 email로 매핑하는 방식이 필요함
-    }
-    
-    // ==================== Students 컬렉션 ====================
-    
-    match /students/{studentId} {
-      // 관리자: 모든 권한
+
+    // ==================== Terms (학기) ====================
+
+    match /terms/{termId} {
       allow read, write: if isAdmin();
-      
-      // 학생: 자신의 정보만 읽기 (studentId 정확 일치)
-      // 주의: Firestore 클라이언트에서 .get(docPath)로만 조회 가능
-      // .where() 쿼리는 불가 (보안 정책)
-      allow read: if isAuthenticated() && 
-                     request.auth.token.email != null;
-      
-      // 쓰기 불가 (관리자 제외)
-      allow write: if isAdmin();
+
+      match /enrollments/{studentId} {
+        allow read, write: if isAdmin();
+      }
+
+      match /scoreRecords/{recordId} {
+        allow read, write: if isAdmin();
+      }
+
+      match /rouletteHistory/{id} {
+        allow read, write: if isAdmin();
+      }
+
+      match /gradeImports/{id} {
+        allow read, write: if isAdmin();
+      }
+
+      match /quizzes/{quizId} {
+        allow read, write: if isAdmin();
+
+        match /responses/{studentId} {
+          allow read, write: if isAdmin();
+        }
+      }
+
+      match /quizTemplates/{templateId} {
+        allow read, write: if isAdmin();
+      }
     }
-    
-    // ==================== Score Records 컬렉션 ====================
-    
-    match /scoreRecords/{recordId} {
-      // 관리자: 모든 권한
-      allow read, write: if isAdmin();
-      
-      // 학생: 자신의 기록만 읽기
-      allow read: if isAuthenticated() && 
-                     request.auth.token.email != null;
-      
-      allow write: if isAdmin();
-    }
-    
-    // ==================== Exam Scores 컬렉션 ====================
-    
-    match /examScores/{examId} {
-      // 관리자: 모든 권한
-      allow read, write: if isAdmin();
-      
-      // 학생: 자신의 성적만 읽기
-      allow read: if isAuthenticated() && 
-                     request.auth.token.email != null;
-      
-      allow write: if isAdmin();
-    }
-    
-    // ==================== Settings 컬렉션 ====================
-    
+
+    // ==================== Settings (전역) ====================
+
     match /settings/{document=**} {
-      // 관리자: 읽기/쓰기
       allow read, write: if isAdmin();
-      
-      // 학생: scoreReasons 읽기만 가능 (실습점수 입력 시 필요)
-      allow read: if isAuthenticated();
-      
-      allow write: if isAdmin();
     }
-    
-    // ==================== Admins 컬렉션 ====================
-    
+
+    // ==================== Admins (참고용) ====================
+
     match /admins/{adminId} {
-      // 관리자만 읽기 가능
-      allow read: if isAdmin();
-      
-      // 쓰기는 관리자만 (사실상 수동 관리)
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
-    
-    // ==================== Roulette History 컬렉션 ====================
-    
-    match /rouletteHistory/{document=**} {
-      // 관리자: 모든 권한 (조회, 저장, 삭제)
-      allow read, write, delete: if isAdmin();
-    }
-    
+
     // ==================== Deny All ====================
-    
-    // 위의 규칙에 매칭되지 않은 모든 요청 차단
+
     match /{document=**} {
       allow read, write: if false;
     }

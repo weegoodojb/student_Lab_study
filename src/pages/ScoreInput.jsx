@@ -22,7 +22,7 @@ const INPUT_TYPE = {
   INDIVIDUAL: 'individual'
 };
 
-export default function ScoreInput({ classFormationCount }) {
+export default function ScoreInput({ termId, classFormationCount }) {
   const [inputType, setInputType] = useState(INPUT_TYPE.GROUP);
   const [selectedClass, setSelectedClass] = useState(1);
   const [selectedGroup, setSelectedGroup] = useState(1);
@@ -44,12 +44,14 @@ export default function ScoreInput({ classFormationCount }) {
   }, []);
 
   useEffect(() => {
+    if (!termId) return;
     if (inputType === INPUT_TYPE.GROUP) {
       loadGroupStudents(selectedClass, selectedGroup);
     } else if (inputType === INPUT_TYPE.INDIVIDUAL) {
       loadAllStudents();
     }
-  }, [selectedClass, selectedGroup, inputType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [termId, selectedClass, selectedGroup, inputType]);
 
   const loadReasons = async () => {
     try {
@@ -68,7 +70,7 @@ export default function ScoreInput({ classFormationCount }) {
     try {
       setLoading(true);
       const q = query(
-        collection(db, 'students'),
+        collection(db, 'terms', termId, 'enrollments'),
         where('studentClass', '==', cls),
         where('group', '==', group)
       );
@@ -84,7 +86,7 @@ export default function ScoreInput({ classFormationCount }) {
   const loadAllStudents = async () => {
     try {
       setLoading(true);
-      const snapshot = await getDocs(collection(db, 'students'));
+      const snapshot = await getDocs(collection(db, 'terms', termId, 'enrollments'));
       setAllStudents(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (err) {
       console.error('전체 학생 로드 실패:', err);
@@ -160,7 +162,7 @@ export default function ScoreInput({ classFormationCount }) {
       }
 
       for (const record of records) {
-        await addDoc(collection(db, 'scoreRecords'), record);
+        await addDoc(collection(db, 'terms', termId, 'scoreRecords'), record);
       }
 
       setMessage(`✅ ${records.length}건 저장 완료`);

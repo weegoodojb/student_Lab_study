@@ -22,14 +22,27 @@
 - `VITE_FIREBASE_MESSAGING_SENDER_ID`
 - `VITE_FIREBASE_APP_ID`
 - `VITE_ADMIN_EMAIL`
+- `VITE_GEMINI_API_KEY` (주차별 퀴즈 서술형 자동채점용, 선택)
 
 기본 관리자 이메일은 `goodojb@gmail.com` 입니다.
+
+Firestore 보안 규칙 배포, Google Forms API 활성화, Gemini API 키 리퍼러 제한 등 1회성 설정은
+`FIRESTORE_DEPLOYMENT.md`를 참고하세요.
 
 ## 2. 실행
 
 ```bash
 npm install
 npm run dev
+```
+
+개발 서버도 실제 클라우드 Firestore(`student-practice-mgmt`)에 바로 연결됩니다. 관리자 1인이
+사용하는 소규모 도구라 별도 로컬 에뮬레이터는 두지 않았습니다. 테스트 데이터가 쌓이면 아래처럼
+Firebase CLI로 언제든 전체 초기화할 수 있습니다.
+
+```bash
+npx firebase login   # 최초 1회
+npx firebase firestore:delete --all-collections --force --project student-practice-mgmt
 ```
 
 브라우저에서 개발 서버 주소를 열고 Google 로그인 후 관리자 계정만 접근 가능한지 확인합니다.
@@ -43,7 +56,9 @@ npm run preview
 
 ## 현재 제외 범위
 - 프라이버시 모드
-- AI 코치
-- Gemini AI
+- 출석/중간/기말 성적의 엑셀(또는 시트) 업로드 — 형식 확정 전까지 "성적 관리" 탭은 자리만 마련된 상태
 
-위 기능은 이번 스프린트 범위에서 제외되어 있습니다.
+## 학기별 히스토리
+모든 학생/점수/조편성/퀴즈 데이터는 `terms/{year}-{semester}` 아래로 스코프됩니다. 학기가 바뀌면
+관리자 대시보드 상단에서 새 학기를 만들고 학생을 새로 업로드하면 되고, 과거 학기 데이터는
+그대로 남아 있습니다. 자세한 구조는 `FIRESTORE_SCHEMA.md` 참고.

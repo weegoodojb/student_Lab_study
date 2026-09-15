@@ -31,7 +31,7 @@ function assignmentToText(assignments) {
     .join(', ');
 }
 
-export default function RouletteTab({ classFormationCount }) {
+export default function RouletteTab({ termId, classFormationCount }) {
   const [selectedClass, setSelectedClass] = useState(1);
   const [spinning, setSpinning] = useState(false);
   const [displayAssignment, setDisplayAssignment] = useState(() => buildRandomAssignment());
@@ -42,8 +42,9 @@ export default function RouletteTab({ classFormationCount }) {
   const timeoutRef = useRef(null);
 
   useEffect(() => {
-    loadHistory(selectedClass);
-  }, [selectedClass]);
+    if (termId) loadHistory(selectedClass);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [termId, selectedClass]);
 
   useEffect(() => {
     return () => {
@@ -55,7 +56,7 @@ export default function RouletteTab({ classFormationCount }) {
     try {
       setLoadingHistory(true);
       const q = query(
-        collection(db, 'rouletteHistory'),
+        collection(db, 'terms', termId, 'rouletteHistory'),
         orderBy('createdAt', 'desc'),
         limit(200)
       );
@@ -112,7 +113,7 @@ export default function RouletteTab({ classFormationCount }) {
 
   const saveHistory = async (assignments) => {
     try {
-      await addDoc(collection(db, 'rouletteHistory'), {
+      await addDoc(collection(db, 'terms', termId, 'rouletteHistory'), {
         studentClass: selectedClass,
         assignments,
         resultText: assignmentToText(assignments),
@@ -126,7 +127,7 @@ export default function RouletteTab({ classFormationCount }) {
 
   const deleteHistoryItem = async (id) => {
     try {
-      await deleteDoc(doc(db, 'rouletteHistory', id));
+      await deleteDoc(doc(db, 'terms', termId, 'rouletteHistory', id));
       setHistory(prev => prev.filter(h => h.id !== id));
     } catch (err) {
       console.error('삭제 실패:', err);
