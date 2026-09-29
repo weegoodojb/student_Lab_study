@@ -10,6 +10,7 @@ import {
   getDoc
 } from 'firebase/firestore';
 import { db } from '../firebase';
+import BulkScoreUpload from './BulkScoreUpload';
 import './ScoreInput.css';
 
 const SCORE_OPTIONS = [];
@@ -363,6 +364,8 @@ export default function ScoreInput({ termId, classFormationCount }) {
 
       {/* 메시지 */}
       {message && <div className="message">{message}</div>}
+
+      <BulkScoreUpload termId={termId} />
     </div>
   );
 }

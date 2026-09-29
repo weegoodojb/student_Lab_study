@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { db } from '../firebase';
+import WeeklyClassComments from './WeeklyClassComments';
 import './GradeManagement.css';
 
 export default function GradeManagement({ termId }) {
   const [students, setStudents] = useState([]);
+  const [practiceTotals, setPracticeTotals] = useState({});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -18,6 +20,18 @@ export default function GradeManagement({ termId }) {
       const q = query(collection(db, 'terms', termId, 'enrollments'), limit(500));
       const snapshot = await getDocs(q);
       setStudents(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+
+      // 평소점수: scoreRecords를 학생별로 합산
+      const scoreSnap = await getDocs(
+        query(collection(db, 'terms', termId, 'scoreRecords'), limit(5000))
+      );
+      const totals = {};
+      scoreSnap.docs.forEach(d => {
+        const { studentId, score } = d.data();
+        const num = Number(score);
+        totals[studentId] = (totals[studentId] || 0) + (Number.isFinite(num) ? num : 0);
+      });
+      setPracticeTotals(totals);
     } catch (error) {
       console.error('학생 목록 로드 실패:', error);
     } finally {
@@ -41,9 +55,11 @@ export default function GradeManagement({ termId }) {
               <th>학번</th>
               <th>이름</th>
               <th>반</th>
+              <th>조</th>
               <th>출석</th>
               <th>중간</th>
               <th>기말</th>
+              <th>평소(합산)</th>
             </tr>
           </thead>
           <tbody>
@@ -52,14 +68,18 @@ export default function GradeManagement({ termId }) {
                 <td>{s.studentId}</td>
                 <td>{s.name}</td>
                 <td>{s.studentClass}</td>
+                <td>{s.group ?? '-'}</td>
                 <td>{s.attendanceScore ?? '-'}</td>
                 <td>{s.midtermScore ?? '-'}</td>
                 <td>{s.finalExamScore ?? '-'}</td>
+                <td>{Math.round((practiceTotals[s.studentId] || 0) * 100) / 100}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <WeeklyClassComments termId={termId} />
     </div>
   );
 }
