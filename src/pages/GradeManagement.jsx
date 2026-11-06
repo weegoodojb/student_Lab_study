@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, limit, query } from 'firebase/firestore';
 import { db } from '../firebase';
 import WeeklyClassComments from './WeeklyClassComments';
+import MidtermUpload from './MidtermUpload';
+import QuizTotalUpload from './QuizTotalUpload';
 import './GradeManagement.css';
 
 export default function GradeManagement({ termId }) {
@@ -27,7 +29,8 @@ export default function GradeManagement({ termId }) {
       );
       const totals = {};
       scoreSnap.docs.forEach(d => {
-        const { studentId, score } = d.data();
+        const { studentId, score, ignored } = d.data();
+        if (ignored) return;
         const num = Number(score);
         totals[studentId] = (totals[studentId] || 0) + (Number.isFinite(num) ? num : 0);
       });
@@ -46,6 +49,9 @@ export default function GradeManagement({ termId }) {
         아래는 현재까지 입력된 값(있는 경우)을 확인하는 용도입니다.
       </div>
 
+      <MidtermUpload termId={termId} onSaved={loadStudents} />
+      <QuizTotalUpload termId={termId} onSaved={loadStudents} />
+
       {loading && <p className="loading">로딩 중...</p>}
 
       <div className="table-wrapper">
@@ -59,7 +65,7 @@ export default function GradeManagement({ termId }) {
               <th>출석</th>
               <th>중간</th>
               <th>기말</th>
-              <th>평소(합산)</th>
+              <th>평소(전체 합산)</th>
             </tr>
           </thead>
           <tbody>

@@ -423,7 +423,9 @@ export default function AdminDashboard() {
         limit(300)
       );
       const snapshot = await getDocs(q);
-      const records = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      const records = snapshot.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(r => !r.ignored);
       records.sort((a, b) => {
         const aTime = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
         const bTime = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
