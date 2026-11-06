@@ -42,6 +42,28 @@ export default function GradeManagement({ termId }) {
     }
   };
 
+  const exportCsv = () => {
+    const esc = v => {
+      const s = String(v ?? '');
+      return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    };
+    const header = ['학번', '이름', '반', '조', '출석', '중간', '기말', '평소(전체 합산)'];
+    const rows = students.map(s => [
+      s.studentId, s.name, s.studentClass, s.group, s.attendanceScore,
+      s.midtermScore, s.finalExamScore,
+      Math.round((practiceTotals[s.studentId] || 0) * 100) / 100,
+    ]);
+    const csv = [header, ...rows].map(r => r.map(esc).join(',')).join('\r\n');
+    // BOM: 엑셀에서 한글 깨짐 방지
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `성적_전체_${termId}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="grade-management">
       <div className="notice-banner">
@@ -53,6 +75,12 @@ export default function GradeManagement({ termId }) {
       <QuizTotalUpload termId={termId} onSaved={loadStudents} />
 
       {loading && <p className="loading">로딩 중...</p>}
+
+      <div style={{ margin: '12px 0' }}>
+        <button type="button" onClick={exportCsv} disabled={loading || students.length === 0}>
+          📥 전체 자료 CSV 내보내기
+        </button>
+      </div>
 
       <div className="table-wrapper">
         <table className="students-table">
